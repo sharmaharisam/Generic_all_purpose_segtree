@@ -7,15 +7,6 @@ struct Lsegtree{
     ll n;
     T identity_element;
     U identity_update;
-
-    /*
-        Definition of identity_element: the element I such that combine(x,I) = x
-        for all x
-
-        Definition of identity_update: the element I such that apply(x,I) = x
-        for all x        
-    */
-
     Lsegtree(ll n, T identity_element, U identity_update)
     {
         this->n = n;
@@ -24,16 +15,12 @@ struct Lsegtree{
         st.assign(4*n,identity_element);
         lazy.assign(4*n, identity_update);
     }
-
-
     T combine(T l, T r)
     {
         // change this function as required.
         T ans = (l + r);
         return ans;
     }
-
-
     void buildUtil(ll v, ll tl, ll tr, vector<T>&a)
     {
         if(tl == tr)
@@ -46,33 +33,23 @@ struct Lsegtree{
         buildUtil(2*v + 2,tm+1,tr,a);
         st[v] = combine(st[2*v + 1], st[2*v + 2]);
     }
-
-
-
     // change the following 2 functions, and you're more or less done.
     T apply(T curr, U upd, ll tl, ll tr)
     {
         T ans = (tr-tl+1)*upd;
-        // increment range by upd:
-        // T ans = curr + (tr - tl + 1)*upd
-
         return ans;
     }
-
     U combineUpdate(U old_upd, U new_upd, ll tl, ll tr)
     {
         U ans = old_upd;
         ans=new_upd;
         return ans;
     }  
-
-
     void push_down(ll v, ll tl, ll tr)
     {
-        //for the below line to work, make sure the "==" operator is defined for U.
         if(lazy[v] == identity_update)return;
         st[v] = apply(st[v], lazy[v], tl, tr);
-        if(2*v + 1 <= 4*n)
+        if(2*v + 2 < 4*n)
         {
             ll tm = (tl + tr)>>1;
             lazy[2*v + 1] = combineUpdate(lazy[2*v+1], lazy[v], tl, tm);
@@ -118,7 +95,7 @@ struct Lsegtree{
 
     void build(vector<T>a)
     {
-        assert( (ll)a.size() == n);
+        assert(sz(a) == n);
         buildUtil(0,0,n-1,a);
     }
     T query(ll l, ll r)
